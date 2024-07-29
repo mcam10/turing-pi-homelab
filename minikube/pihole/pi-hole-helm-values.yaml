@@ -1,0 +1,36 @@
+# will create kubernees ingress
+virtualHost: pihole.bingitech.io
+ingress:
+  enabled: true
+  annotations:
+     kubernetes.io/ingress.class: nginx
+  path: /
+  hosts:
+    - pihole.bingitech.local
+  tls:
+    - hosts: 
+        - pihole.bingitech.local
+
+# will set your admin password for the web inteface
+adminPassword: "somethingcool"
+
+extraEnvVars: {
+    TZ: "America/Los_Angeles"
+}
+  
+# create a kubernetes service and expose
+# port 53 outside of cluster on the local network
+serviceDns:
+  loadBalancerIP: 192.168.1.112
+  annotations:
+      metallb.universe.tf/address-pool: production-pool
+      metallb.universe.tf/allow-shared-ip: pihole-svc
+  type: LoadBalancer
+
+
+podDnsConfig:
+  enabled: true
+  policy: "None"
+  nameservers:
+  - 127.0.0.1
+  - 1.1.1.1
