@@ -1,0 +1,60 @@
+globalArguments:
+  - "--global.sendanonymoususage=false"
+  - "--global.checknewversion=false"
+
+additionalArguments:
+  - "--serversTransport.insecureSkipVerify=true"
+  - "--log.level=DEBUG"
+  - "--providers.kubernetesingress.ingressclass=traefik-external"
+
+deployment:
+  enabled: true
+  replicas: 3
+  annotations: {}
+  podAnnotations: {}
+  additionalContainers: []
+  initContainers: []
+
+ingressRoute:
+  dashboard:
+    enabled: false
+
+ports:
+  web:
+    redirectTo:
+      port: websecure
+  websecure:
+    tls:
+      enabled: true
+
+ingressClass:
+  name: traefik-external
+providers:
+  kubernetesCRD:
+    enabled: true
+    ingressClass: traefik-external
+    allowExternalNameServices: true
+  kubernetesIngress:
+    ingressClass: traefik-external
+    enabled: true
+    allowExternalNameServices: true
+    publishedService:
+      enabled: false
+
+rbac:
+  enabled: true
+
+service:
+  enabled: true
+  type: LoadBalancer
+  annotations: {}
+  labels: {}
+  spec:
+    loadBalancerIP: 192.168.1.111 # this should be an IP in the MetalLB range
+  loadBalancerSourceRanges: []
+  externalIPs: []
+
+tlsStore:
+  default:
+    defaultCertificate:
+      secretName: bingitech

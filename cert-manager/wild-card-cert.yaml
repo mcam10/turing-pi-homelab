@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wild-card-bingitech-io
+  namespace: traefik
+spec:
+  # Secret names are always required.
+  secretName: bingitech
+  secretTemplate:
+    annotations:
+      reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "traefik,pihole"
+      reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true" # Auto create reflection for matching namespaces
+      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "traefik,pihole" # Control auto-reflection namespaces
+  # At least one of a DNS Name, URI, or IP address is required.
+  dnsNames:
+    - "bingitech.io"
+    - "*.bingitech.io"
+  issuerRef:
+    kind: ClusterIssuer
+    name: cloudflare-issuer
